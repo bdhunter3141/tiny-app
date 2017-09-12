@@ -11,7 +11,7 @@ const urlDatabase = {
 
 const urlsArr = [];
 
-for (url in urlDatabase) {
+for (let url in urlDatabase) {
   urlsArr.push({ "shortened": url, "original": urlDatabase[url] });
 }
 
@@ -30,6 +30,21 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlsArr };
   res.render("urls_index", templateVars);
+});
+
+
+app.get("/urls/:id", (req, res) => {
+  let originalURL = "There is no URL by that name!";
+  for (let short in urlDatabase) {
+    if (short === req.params.id) {
+      originalURL = urlDatabase[short];
+    }
+  }
+  let templateVars = {
+    shortURL: req.params.id,
+    origURL: originalURL
+  };
+  res.render("urls_show", templateVars);
 });
 
 app.listen(PORT, () => {
