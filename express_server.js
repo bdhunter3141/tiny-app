@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
+const bodyParser = require("body-parser");
 
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -13,6 +15,10 @@ const urlsArr = [];
 
 for (let url in urlDatabase) {
   urlsArr.push({ "shortened": url, "original": urlDatabase[url] });
+}
+
+function generateRandomString() {
+
 }
 
 app.get("/", (req, res) => {
@@ -27,11 +33,19 @@ app.get("/hello", (req, res) => {
   res.end("<html><body>Hello <b>World</b></body></html>");
 });
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlsArr };
   res.render("urls_index", templateVars);
 });
 
+app.post("/urls", (req, res) => {
+  console.log(req.body);
+  res.send("Ok");
+});
 
 app.get("/urls/:id", (req, res) => {
   let originalURL = "There is no URL by that name!";
