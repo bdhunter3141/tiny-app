@@ -29,8 +29,6 @@ function generateRandomString() {
   return randomString;
 }
 
-console.log(generateRandomString());
-
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
@@ -53,7 +51,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
+  urlDatabase[generateRandomString()] = req.body.longURL;
   res.send("Ok");
 });
 
