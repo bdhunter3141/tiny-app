@@ -18,8 +18,18 @@ for (let url in urlDatabase) {
 }
 
 function generateRandomString() {
-
+  const letterNumberBank = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  let randomStringArr = [];
+  for (let val of letterNumberBank) {
+    if (randomStringArr.length < 7) {
+      randomStringArr.push(letterNumberBank[Math.floor(Math.random() * letterNumberBank.length) + 1]);
+    }
+  }
+  let randomString = randomStringArr.join("");
+  return randomString;
 }
+
+console.log(generateRandomString());
 
 app.get("/", (req, res) => {
   res.end("Hello!");
