@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TinyApp</title>
+</head>
+<body>
+  <h2>Your <b>"Tiny"</b> URLs</h2>
+  <ul>
+    <% urls.forEach((url) => { %>
+      <li><%= url.shortened %> -- <%= url.original %></li>
+    <% }); %>
+  </ul>
+</body>
+</html>

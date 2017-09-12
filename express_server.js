@@ -9,6 +9,12 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const urlsArr = [];
+
+for (url in urlDatabase) {
+  urlsArr.push({ "shortened": url, "original": urlDatabase[url] });
+}
+
 app.get("/", (req, res) => {
   res.end("Hello!");
 });
@@ -22,8 +28,8 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
-  res.render("urls_index", urlDatabase);
+  let templateVars = { urls: urlsArr };
+  res.render("urls_index", templateVars);
 });
 
 app.listen(PORT, () => {
