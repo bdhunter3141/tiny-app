@@ -1,0 +1,24 @@
+{
+  "name": "tiny-app",
+  "version": "1.0.0",
+  "description": "A full stack web app built with Node and Express that allows users to shorten long URLs (à la bit.ly).",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdhunter3141/tiny-app.git"
+  },
+  "author": "Bryan Hunter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bdhunter3141/tiny-app/issues"
+  },
+  "homepage": "https://github.com/bdhunter3141/tiny-app#readme",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "express": "^4.15.4"
+  }
+}
