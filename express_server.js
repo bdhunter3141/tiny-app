@@ -13,6 +13,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 function generateRandomString() {
   const letterNumberBank = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   let randomStringArr = [];
@@ -39,6 +52,28 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new", { username: req.cookies["username"] });
+});
+
+app.get("/register", (req, res) => {
+  res.render("urls_register", { username: req.cookies["username"] });
+});
+
+//WORK HERE ------------------------------------------------
+
+app.post("/register", (req, res) => {
+  let userRandomID = generateRandomString();
+  if (users[userRandomID]) {
+    while (users[userRandomID]) {
+      userRandomID = generateRandomString();
+    }
+  }
+  users[userRandomID] = {
+    id: userRandomID,
+    email: req.body.email,
+    password: req.body.password
+  };
+  res.cookie("username", userRandomID);
+  res.status(301).redirect("/urls");
 });
 
 app.post("/urls", (req, res) => {
@@ -89,7 +124,6 @@ app.post("/urls/:id/", (req, res) => {
     shortURL = item;
     longURL = req.body[item];
   };
-  console.log(longURL);
   urlDatabase[shortURL] = longURL;
   res.status(301).redirect(`/urls/${shortURL}`);
 });
