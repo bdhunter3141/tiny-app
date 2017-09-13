@@ -60,8 +60,6 @@ app.get("/register", (req, res) => {
   res.render("urls_register", { user_id: users[req.cookies.user_id] });
 });
 
-//WORK HERE ------------------------------------------------
-
 app.post("/register", (req, res) => {
   let userRandomID = generateRandomString();
   if (req.body.email === "" || req.body.password === "") {
@@ -98,12 +96,24 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie(Object.keys(req.body)[0], req.body.user_id);
-  res.status(301).redirect("/urls");
+  if (req.body.email === "" || req.body.password === "") {
+    res.status(400).end("Please enter both email and password.");
+  }
+  for (user in users) {
+    if (users[user].email == req.body.email) {
+      if (users[user].password == req.body.password) {
+        res.cookie("user_id", user);
+        res.status(301).redirect("/urls");
+      } else {
+        res.status(400).end("You seem to have entered the incorrect password. Please try again.");
+      }
+    }
+  }
+  res.status(400).end("You seem to have entered the incorrect email. Please try again.");
 });
 
 app.get("/login", (req, res) => {
-  res.render("/urls_login", { user_id: users[req.cookies.user_id] });
+  res.render("urls_login", { user_id: users[req.cookies.user_id] });
 });
 
 app.post("/logout", (req, res) => {
