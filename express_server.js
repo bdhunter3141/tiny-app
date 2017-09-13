@@ -45,15 +45,21 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+app.post("/urls", (req, res) => {
+  let randomString = generateRandomString();
+  if (urlDatabase[randomString]) {
+    while (urlDatabase[randomString]) {
+      randomString = generateRandomString();
+    }
+  }
+  urlDatabase[randomString] = req.body.longURL;
+  res.status(301).redirect(`/urls/${randomString}`);
+  console.log(urlDatabase);
+});
+
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlsArr };
   res.render("urls_index", templateVars);
-});
-
-app.post("/urls", (req, res) => {
-  let randomString = generateRandomString();
-  urlDatabase[randomString] = req.body.longURL;
-  res.redirect(`/urls/${randomString}`);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -70,6 +76,29 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  if (urlDatabase[req.params.shortURL]) {
+    let longURL = urlDatabase[req.params.shortURL];
+    res.status(301).redirect(longURL);
+  } else {
+    res.status(404).end("Page not found. Please check that you have the correct 'Tiny' URL.");
+  }
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  console.log(urlDatabase);
+  res.status(301).redirect("/urls");
+});
+
 app.listen(PORT, () => {
   console.log(`Listening on: https://localhost:${PORT}!`);
 });
+
+
+
+
+
+
+
+

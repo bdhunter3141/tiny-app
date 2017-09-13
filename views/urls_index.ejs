@@ -9,7 +9,7 @@
   <h2>Your <em>"Tiny"</em> URLs</h2>
   <ul>
     <% urls.forEach((url) => { %>
-      <li><%= url.shortened %> -- <%= url.original %></li>
+      <li><form method="POST" action="/urls/<%= url.shortened %>/delete"><%= url.shortened %> -- <%= url.original %> -- <input type="submit" value="Delete"></form></li>
     <% }); %>
   </ul>
 </body>
