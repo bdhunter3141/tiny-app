@@ -26,6 +26,8 @@ const users = {
   }
 };
 
+let currentUser= null;
+
 function generateRandomString() {
   const letterNumberBank = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   let randomStringArr = [];
@@ -51,11 +53,11 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", { username: req.cookies["username"] });
+  res.render("urls_new", { user_id: users[req.cookies.user_id] });
 });
 
 app.get("/register", (req, res) => {
-  res.render("urls_register", { username: req.cookies["username"] });
+  res.render("urls_register", { user_id: users[req.cookies.user_id] });
 });
 
 //WORK HERE ------------------------------------------------
@@ -80,7 +82,7 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password
   };
-  res.cookie("username", userRandomID);
+  res.cookie("user_id", userRandomID);
   res.status(301).redirect("/urls");
 });
 
@@ -96,17 +98,21 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie(Object.keys(req.body)[0], req.body.username);
+  res.cookie(Object.keys(req.body)[0], req.body.user_id);
   res.status(301).redirect("/urls");
 });
 
+app.get("/login", (req, res) => {
+  res.render("/urls_login", { user_id: users[req.cookies.user_id] });
+});
+
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.status(301).redirect("/urls");
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = { urls: urlDatabase, user_id: users[req.cookies.user_id] };
   res.render("urls_index", templateVars);
 });
 
@@ -120,7 +126,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     origURL: originalURL,
-    username: req.cookies["username"]
+    user_id: users[req.cookies.user_id]
   };
   res.render("urls_show", templateVars);
 });
