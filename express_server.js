@@ -52,8 +52,6 @@ app.post("/urls", (req, res) => {
   res.status(301).redirect(`/urls/${randomString}`);
 });
 
-//CONTINUE WORKING HERE
-
 app.post("/login", (req, res) => {
   res.cookie(Object.keys(req.body)[0], req.body.username);
   res.status(301).redirect("/urls");
