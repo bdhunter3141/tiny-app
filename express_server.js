@@ -54,8 +54,13 @@ app.post("/urls", (req, res) => {
 
 //CONTINUE WORKING HERE
 
-app.post("/submit", (req, res) => {
+app.post("/login", (req, res) => {
   res.cookie(Object.keys(req.body)[0], req.body.username);
+  res.status(301).redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
   res.status(301).redirect("/urls");
 });
 
