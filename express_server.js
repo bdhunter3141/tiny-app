@@ -50,6 +50,18 @@ app.post("/urls", (req, res) => {
   res.status(301).redirect(`/urls/${randomString}`);
 });
 
+app.post("/urls/show", (req, res) => {
+  let shortURL = "";
+  let longURL = "";
+  for (let item in req.body) {
+    shortURL = item;
+    longURL = req.body[item];
+  };
+  console.log(longURL);
+  urlDatabase[shortURL] = longURL;
+  res.status(301).redirect(`/urls/${shortURL}`);
+});
+
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);

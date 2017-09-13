@@ -8,5 +8,10 @@
   <% include partials/_header.ejs %>
   <h2>Your <em>"Tiny"</em> URL</h2>
   <p><%= shortURL %> -- <%= origURL %></p>
+  <p>Should this link to somewhere else?</p>
+  <form method="POST" action="/urls/show">
+    <input id="longURL" type="text" name="<%= shortURL %>" placeholder="http://" style="width: 300px">
+    <input type="submit" value="Update">
+  </form>
 </body>
 </html>

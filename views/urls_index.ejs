@@ -9,7 +9,7 @@
   <h2>Your <em>"Tiny"</em> URLs</h2>
   <ul>
     <% for (let url in urls) { %>
-      <li><form method="POST" action="/urls/<%= url %>/delete"><%= url %> -- <%= urls[url] %> -- <input type="submit" value="Delete"></form></li>
+      <li><form method="POST" action="/urls/<%= url %>/delete"><%= url %> -- <%= urls[url] %> -- <a href="/urls/<%= url %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
     <% }; %>
   </ul>
 </body>
