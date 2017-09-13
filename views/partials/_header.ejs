@@ -1,10 +1,12 @@
 <header>
-  <h1><strong>TinyApp</strong></h1>
+  <h1 style="display:inline-block; float:left; padding-right:10%;"><strong><a href="/urls/" style="text-decoration:none;">TinyApp</a></strong></h1>
     <% if (!user_id) { %>
-      <form method="POST" action="/login">
-        <input type="text" name="user_id">
-        <input type="submit" value="Login">
-      </form>
+      <div>
+        <ul style="list-style:none; display:inline-block; float:left;">
+          <li style="display:inline-block; float:right;"><a href="/register/">Register</a></li>
+          <li style="display:inline-block; float:right; padding-right: 15px;"><a href="/login/">Sign In</a></li>
+        </ul>
+      </div>
     <% } else { %>
       <p style="display:inline-block;">
       Welcome, <%= user_id.id %>!
@@ -13,4 +15,5 @@
         <input type="submit" value="Logout">
       </form>
     <% }; %>
+    <br style="clear: both;" />
 </header>

@@ -97,7 +97,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/login", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
-    res.status(400).end("Please enter both email and password.");
+    res.status(403).end("Please enter both email and password.");
   }
   for (user in users) {
     if (users[user].email == req.body.email) {
@@ -105,11 +105,11 @@ app.post("/login", (req, res) => {
         res.cookie("user_id", user);
         res.status(301).redirect("/urls");
       } else {
-        res.status(400).end("You seem to have entered the incorrect password. Please try again.");
+        res.status(403).end("You seem to have entered the incorrect password. Please try again.");
       }
     }
   }
-  res.status(400).end("You seem to have entered the incorrect email. Please try again.");
+  res.status(403).end("You seem to have entered the incorrect email. Please try again.");
 });
 
 app.get("/login", (req, res) => {
