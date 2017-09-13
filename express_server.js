@@ -11,17 +11,11 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const urlsArr = [];
-
-for (let url in urlDatabase) {
-  urlsArr.push({ "shortened": url, "original": urlDatabase[url] });
-}
-
 function generateRandomString() {
   const letterNumberBank = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   let randomStringArr = [];
   for (let val of letterNumberBank) {
-    while (randomStringArr.length < 6) {
+    if (!randomStringArr[5]) {
       randomStringArr.push(letterNumberBank[Math.floor(Math.random() * letterNumberBank.length) + 1]);
     }
   }
@@ -54,11 +48,10 @@ app.post("/urls", (req, res) => {
   }
   urlDatabase[randomString] = req.body.longURL;
   res.status(301).redirect(`/urls/${randomString}`);
-  console.log(urlDatabase);
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlsArr };
+  let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
 
@@ -87,7 +80,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-  console.log(urlDatabase);
   res.status(301).redirect("/urls");
 });
 

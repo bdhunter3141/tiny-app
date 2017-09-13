@@ -8,9 +8,9 @@
   <% include partials/_header.ejs %>
   <h2>Your <em>"Tiny"</em> URLs</h2>
   <ul>
-    <% urls.forEach((url) => { %>
-      <li><form method="POST" action="/urls/<%= url.shortened %>/delete"><%= url.shortened %> -- <%= url.original %> -- <input type="submit" value="Delete"></form></li>
-    <% }); %>
+    <% for (let url in urls) { %>
+      <li><form method="POST" action="/urls/<%= url %>/delete"><%= url %> -- <%= urls[url] %> -- <input type="submit" value="Delete"></form></li>
+    <% }; %>
   </ul>
 </body>
 </html>
