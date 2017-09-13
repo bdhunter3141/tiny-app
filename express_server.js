@@ -62,6 +62,14 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let userRandomID = generateRandomString();
+  if (req.body.email === "" || req.body.password === "") {
+    res.status(400).end("Please fill in all form fields.");
+  }
+  for (user in users) {
+    if (users[user].email === req.body.email) {
+      res.status(400).end("You seem to be registered already! Please sign in.");
+    }
+  }
   if (users[userRandomID]) {
     while (users[userRandomID]) {
       userRandomID = generateRandomString();
