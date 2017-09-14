@@ -178,7 +178,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   for (let object in urlDatabase) {
-    if (urlDatabase[object].shortURL === req.params.id) {
+    if (urlDatabase[object].user_id !== req.cookies.user_id) {
+      res.status(403).end("You must be the creator of the URL to delete it!");
+    } else if (urlDatabase[object].shortURL === req.params.id) {
       urlDatabase.splice(object, 1);
     }
   }
