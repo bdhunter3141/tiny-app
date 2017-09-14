@@ -8,10 +8,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
+const urlDatabase = [
+  { shortURL: "b2xVn2", longURL: "http://www.lighthouselabs.ca", user_id: "userRandomID" },
+  { shortURL: "9sm5xK", longURL: "http://www.google.com", user_id: "user2RandomID" }
+];
 
 const users = {
   "userRandomID": {
@@ -69,7 +69,7 @@ app.post("/register", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).end("Please fill in all form fields.");
   }
-  for (user in users) {
+  for (let user in users) {
     if (users[user].email === req.body.email) {
       res.status(400).end("You seem to be registered already! Please sign in.");
     }
@@ -90,12 +90,18 @@ app.post("/register", (req, res) => {
 
 app.post("/urls", (req, res) => {
   let randomString = generateRandomString();
-  if (urlDatabase[randomString]) {
-    while (urlDatabase[randomString]) {
-      randomString = generateRandomString();
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].shortURL === randomString) {
+      while (urlDatabase[object].shortURL === randomString) {
+        randomString = generateRandomString();
+      }
     }
   }
-  urlDatabase[randomString] = req.body.longURL;
+  urlDatabase.push({
+    shortURL: randomString,
+    longURL: req.body.longURL,
+    user_id: req.cookies.user_id
+  });
   res.status(301).redirect(`/urls/${randomString}`);
 });
 
@@ -103,7 +109,7 @@ app.post("/login", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(403).end("Please enter both email and password.");
   }
-  for (user in users) {
+  for (let user in users) {
     if (users[user].email == req.body.email) {
       if (users[user].password == req.body.password) {
         res.cookie("user_id", user);
@@ -132,9 +138,9 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   let originalURL = "There is no URL by that name!";
-  for (let short in urlDatabase) {
-    if (short === req.params.id) {
-      originalURL = urlDatabase[short];
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].shortURL === req.params.id) {
+      originalURL = urlDatabase[object].longURL;
     }
   }
   let templateVars = {
@@ -146,27 +152,36 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls/:id/", (req, res) => {
-  let shortURL = "";
-  let longURL = "";
+  let short = "";
+  let long = "";
   for (let item in req.body) {
-    shortURL = item;
-    longURL = req.body[item];
+    short = item;
+    long = req.body[item];
   };
-  urlDatabase[shortURL] = longURL;
-  res.status(301).redirect(`/urls/${shortURL}`);
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].shortURL === short) {
+      urlDatabase[object].longURL = long;
+    }
+  }
+  res.status(301).redirect(`/urls/${short}`);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL]) {
-    let longURL = urlDatabase[req.params.shortURL];
-    res.status(301).redirect(longURL);
-  } else {
-    res.status(404).end("Page not found. Please check that you have the correct 'Tiny' URL.");
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].shortURL === req.params.shortURL) {
+      let long = urlDatabase[object].longURL;
+      res.status(301).redirect(long);
+    }
   }
+  res.status(404).end("Page not found. Please check that you have the correct 'Tiny' URL.");
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].shortURL === req.params.id) {
+      urlDatabase.splice(object, 1);
+    }
+  }
   res.status(301).redirect("/urls");
 });
 

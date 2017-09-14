@@ -8,8 +8,8 @@
   <% include partials/_header.ejs %>
   <h2>Your <em>"Tiny"</em> URLs</h2>
   <ul>
-    <% for (let url in urls) { %>
-      <li><form method="POST" action="/urls/<%= url %>/delete"><%= url %> -- <%= urls[url] %> -- <a href="/urls/<%= url %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
+    <% for (let object in urls) { %>
+      <li><form method="POST" action="/urls/<%= urls[object].shortURL %>/delete"><%= urls[object].shortURL %> -- <%= urls[object].longURL %> -- <a href="/urls/<%= urls[object].shortURL %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
     <% }; %>
   </ul>
 </body>
