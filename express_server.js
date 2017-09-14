@@ -3,28 +3,15 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-const urlDatabase = [
-  { shortURL: "b2xVn2", longURL: "http://www.lighthouselabs.ca", user_id: "userRandomID" },
-  { shortURL: "9sm5xK", longURL: "http://www.google.com", user_id: "user2RandomID" }
-];
+const urlDatabase = [];
 
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-};
+const users = {};
 
 const urlsForUser = function(id) {
   let userURLs = [];
@@ -35,6 +22,7 @@ const urlsForUser = function(id) {
   }
   return userURLs;
 }
+
 
 function generateRandomString() {
   const letterNumberBank = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -92,11 +80,19 @@ app.post("/register", (req, res) => {
   }
   users[userRandomID] = {
     id: userRandomID,
-    email: req.body.email,
-    password: req.body.password
+    email: req.body.email
   };
-  res.cookie("user_id", userRandomID);
-  res.status(301).redirect("/urls");
+  bcrypt.hash(req.body.password, 10, function(err, hash) {
+    if (err) {
+      console.log(err);
+      res.status(400);
+      return;
+    }
+    users[userRandomID]["password"] = hash;
+    console.log(users[userRandomID])
+    res.cookie("user_id", userRandomID);
+    res.status(301).redirect("/urls");
+  });
 });
 
 app.post("/urls", (req, res) => {
@@ -121,19 +117,31 @@ app.post("/login", (req, res) => {
     res.status(403).end("Please enter both email and password.");
     return;
   }
+  let userEmailMatch = null;
   for (let user in users) {
     if (users[user].email == req.body.email) {
-      if (users[user].password == req.body.password) {
-        res.cookie("user_id", user);
+      userEmailMatch = user;
+    }
+  }
+  if (userEmailMatch === null) {
+    res.status(403).end("You seem to have entered the incorrect email. Please try again.");
+  } else {
+    bcrypt.compare(req.body.password, users[userEmailMatch].password, function(err, response) {
+      if (err) {
+        console.log(err);
+        res.status(500).end("Server error.");
+        return;
+      }
+      if (response == true) {
+        res.cookie("user_id", userEmailMatch);
         res.status(301).redirect("/urls");
         return;
       } else {
         res.status(403).end("You seem to have entered the incorrect password. Please try again.");
         return;
       }
-    }
+    });
   }
-  res.status(403).end("You seem to have entered the incorrect email. Please try again.");
 });
 
 app.get("/login", (req, res) => {
