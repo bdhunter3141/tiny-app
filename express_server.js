@@ -26,7 +26,15 @@ const users = {
   }
 };
 
-let currentUser= null;
+const urlsForUser = function(id) {
+  let userURLs = [];
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].user_id === id) {
+      userURLs.push(urlDatabase[object]);
+    }
+  }
+  return userURLs;
+}
 
 function generateRandomString() {
   const letterNumberBank = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -55,6 +63,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls/new", (req, res) => {
   if (req.cookies.user_id) {
     res.render("urls_new", { user_id: users[req.cookies.user_id] });
+    return;
   } else {
     res.status(403).redirect("/login/");
   }
@@ -68,10 +77,12 @@ app.post("/register", (req, res) => {
   let userRandomID = generateRandomString();
   if (req.body.email === "" || req.body.password === "") {
     res.status(400).end("Please fill in all form fields.");
+    return;
   }
   for (let user in users) {
     if (users[user].email === req.body.email) {
       res.status(400).end("You seem to be registered already! Please sign in.");
+      return;
     }
   }
   if (users[userRandomID]) {
@@ -108,14 +119,17 @@ app.post("/urls", (req, res) => {
 app.post("/login", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(403).end("Please enter both email and password.");
+    return;
   }
   for (let user in users) {
     if (users[user].email == req.body.email) {
       if (users[user].password == req.body.password) {
         res.cookie("user_id", user);
         res.status(301).redirect("/urls");
+        return;
       } else {
         res.status(403).end("You seem to have entered the incorrect password. Please try again.");
+        return;
       }
     }
   }
@@ -132,21 +146,24 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, user_id: users[req.cookies.user_id] };
+  let templateVars = { urls: urlsForUser(req.cookies.user_id), user_id: users[req.cookies.user_id] };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
   let originalURL = "There is no URL by that name!";
+  let exists = null;
   for (let object in urlDatabase) {
     if (urlDatabase[object].shortURL === req.params.id) {
       originalURL = urlDatabase[object].longURL;
+      exists = true;
     }
   }
   let templateVars = {
     shortURL: req.params.id,
     origURL: originalURL,
-    user_id: users[req.cookies.user_id]
+    user_id: users[req.cookies.user_id],
+    exists: exists
   };
   res.render("urls_show", templateVars);
 });
@@ -171,6 +188,7 @@ app.get("/u/:shortURL", (req, res) => {
     if (urlDatabase[object].shortURL === req.params.shortURL) {
       let long = urlDatabase[object].longURL;
       res.status(301).redirect(long);
+      return;
     }
   }
   res.status(404).end("Page not found. Please check that you have the correct 'Tiny' URL.");
@@ -178,13 +196,13 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   for (let object in urlDatabase) {
-    if (urlDatabase[object].user_id !== req.cookies.user_id) {
-      res.status(403).end("You must be the creator of the URL to delete it!");
-    } else if (urlDatabase[object].shortURL === req.params.id) {
+    if (urlDatabase[object].user_id === req.cookies.user_id) {
       urlDatabase.splice(object, 1);
+      res.status(301).redirect("/urls");
+      return;
     }
   }
-  res.status(301).redirect("/urls");
+  res.status(403).end("You must be the creator of the URL to delete it!");
 });
 
 app.listen(PORT, () => {

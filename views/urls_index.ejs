@@ -7,10 +7,17 @@
 <body>
   <% include partials/_header.ejs %>
   <h2>Your <em>"Tiny"</em> URLs</h2>
-  <ul>
-    <% for (let object in urls) { %>
-      <li><form method="POST" action="/urls/<%= urls[object].shortURL %>/delete"><%= urls[object].shortURL %> -- <%= urls[object].longURL %> -- <a href="/urls/<%= urls[object].shortURL %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
-    <% }; %>
-  </ul>
+  <% if (urls[0]) { %>
+    <ul>
+      <% for (let object in urls) { %>
+        <li><form method="POST" action="/urls/<%= urls[object].shortURL %>/delete"><%= urls[object].shortURL %> -- <%= urls[object].longURL %> -- <a href="/urls/<%= urls[object].shortURL %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
+      <% }; %>
+    </ul>
+  <% } else if (!user_id) { %>
+    <p>Hey there! It seems you haven't logged in or registered with us.</p>
+    <p>Please use one of the links at the top of the page to get started. :)</p>
+  <% } else { %>
+    <p>Looks like you haven't created any "Tiny" URLs yet! Why not make one <a href="/urls/new">now?</a></p>
+  <% }; %>
 </body>
 </html>

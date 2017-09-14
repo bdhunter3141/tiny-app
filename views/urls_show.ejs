@@ -8,12 +8,16 @@
   <% include partials/_header.ejs %>
   <h2>Your <em>"Tiny"</em> URL</h2>
   <p><%= shortURL %> -- <%= origURL %></p>
-  <% if (user_id) { %>
+  <% if (user_id && exists) { %>
     <p>Should this link to somewhere else?</p>
     <form method="POST" action="/urls/<%= shortURL %>">
       <input type="text" name="<%= shortURL %>" placeholder="http://" style="width: 300px">
       <input type="submit" value="Update">
     </form>
-  <% } %>
+  <% } else { %>
+    <% if (origURL !== "There is no URL by that name!") { %>
+      <p>Sign in to create and edit your own "Tiny" URLs!</p>
+    <% } %>
+  <% }; %>
 </body>
 </html>
