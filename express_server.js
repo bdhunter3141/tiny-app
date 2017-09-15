@@ -2,6 +2,7 @@
 
 const cookieSession = require("cookie-session");
 const express = require("express");
+const methodOverride = require("method-override");
 const app = express();
 const PORT = process.env.PORT || 8080;
 const bodyParser = require("body-parser");
@@ -10,6 +11,7 @@ const bcrypt = require("bcrypt");
 
 // Dependencies setup
 
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -254,7 +256,7 @@ app.get("/urls/:id", (req, res) => {
 
 // POST Individual URL Page: Takes input from the edit form
 
-app.post("/urls/:id/", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   let short = "";
   let long = "";
   for (let item in req.body) {
@@ -290,7 +292,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 // POST Delete page: Takes delete input from delete button
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   for (let object in urlDatabase) {
 
     // Deletes URL from database and redirects to homepage if user is logged in

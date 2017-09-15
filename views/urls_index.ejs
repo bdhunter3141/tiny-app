@@ -12,7 +12,7 @@
     <ul>
       <% for (let object in urls) { %>
       <!-- Delete button followed by shortened URL and long URL -->
-        <li><form method="POST" action="/urls/<%= urls[object].shortURL %>/delete"><a href="/u/<%= urls[object].shortURL %>"><%= urls[object].shortURL %></a> -- <%= urls[object].longURL %> -- <a href="/urls/<%= urls[object].shortURL %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
+        <li><form method="POST" action="/urls/<%= urls[object].shortURL %>?_method=DELETE"><a href="/u/<%= urls[object].shortURL %>"><%= urls[object].shortURL %></a> -- <%= urls[object].longURL %> -- <a href="/urls/<%= urls[object].shortURL %>/">Edit</a> -- <input type="submit" value="Delete"></form></li>
       <% }; %>
     </ul>
     <p style="padding-top:20px;"><a href="/urls/new">Create a new "Tiny" URL?</a></p>

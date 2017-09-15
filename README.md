@@ -16,6 +16,7 @@ A full stack web app built with Node and Express that allows users to shorten lo
 - Express
 - EJS
 - bcrypt
+- method-override
 - body-parser
 - cookie-parser
 - cookie-session
