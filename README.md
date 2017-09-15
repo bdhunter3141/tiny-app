@@ -5,9 +5,9 @@ A full stack web app built with Node and Express that allows users to shorten lo
 ## Final Product
 
 !["The homepage for a signed in user."](https://github.com/bdhunter3141/tiny-app/blob/master/docs/homepage.png?raw=true)
-
+      -----------------------------------------------
 !["The sign in page."](https://github.com/bdhunter3141/tiny-app/blob/master/docs/login-page.png?raw=true)
-
+      -----------------------------------------------
 !["Where you are able to edit your 'Tiny' URL."](https://github.com/bdhunter3141/tiny-app/blob/master/docs/url-edit-page.png?raw=true)
 
 ## Dependencies
