@@ -151,7 +151,10 @@ app.post("/urls", (req, res) => {
   urlDatabase.push({
     shortURL: randomString,
     longURL: req.body.longURL,
-    user_id: req.session.user_id
+    user_id: req.session.user_id,
+    views: 0,
+    uniqueViews: 0,
+    uniqueVisitors: {}
   });
 
   // Redirect to page displaying the new URL
@@ -234,23 +237,27 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
 
-  // Checks if URL exists in database
-  let originalURL = "There is no URL by that name!";
-  let exists = null;
-  for (let object in urlDatabase) {
-    if (urlDatabase[object].shortURL === req.params.id) {
-      originalURL = urlDatabase[object].longURL;
-      exists = true;
-    }
-  }
-
-  // Passes all URL information to URL Page
+// Passes all URL information to URL Page
   let templateVars = {
     shortURL: req.params.id,
-    origURL: originalURL,
+    origURL: "There is no URL by that name!",
     user_id: users[req.session.user_id],
-    exists: exists
+    exists: false,
+    viewCount: 0,
+    uniqueViews: 0,
+    uniqueVisitors: null
   };
+
+  // Checks if URL exists in database and adds view counts
+  for (let object in urlDatabase) {
+    if (urlDatabase[object].shortURL === req.params.id) {
+      templateVars.origURL = urlDatabase[object].longURL;
+      templateVars.exists = true;
+      templateVars.viewCount = urlDatabase[object].views;
+      templateVars.uniqueViews = urlDatabase[object].uniqueViews;
+      templateVars.uniqueVisitors = urlDatabase[object].uniqueVisitors;
+    }
+  }
   res.render("urls_show", templateVars);
 });
 
@@ -281,6 +288,29 @@ app.get("/u/:shortURL", (req, res) => {
   for (let object in urlDatabase) {
     if (urlDatabase[object].shortURL === req.params.shortURL) {
       let long = urlDatabase[object].longURL;
+
+      // Keeps track of the number of total views of the URL
+      urlDatabase[object].views = (urlDatabase[object].views || 0) + 1;
+
+      // If it is NOT a new URL visitor, update the information for that visitor
+      if (req.session[req.params.shortURL]) {
+        let uniqueObj = urlDatabase[object].uniqueVisitors;
+        let cookie = req.session;
+        uniqueObj[cookie[urlDatabase[object].shortURL]].views += 1;
+        uniqueObj[cookie[urlDatabase[object].shortURL]].time.push(Date(Date.now()).toString());
+
+      // If it IS a new visitor, assign a cookie and a random string for a visitor identifier
+      } else {
+        urlDatabase[object].uniqueViews += 1;
+        let randomString = generateRandomString();
+        if (urlDatabase[object].uniqueVisitors[randomString]) {
+          while (urlDatabase[object].uniqueVisitors[randomString]) {
+            randomString = generateRandomString();
+          }
+        }
+        urlDatabase[object].uniqueVisitors[randomString] = { name: randomString, views: 1, time: [Date(Date.now()).toString()] }
+        req.session[urlDatabase[object].shortURL] = randomString;
+      }
       res.status(301).redirect(long);
       return;
     }

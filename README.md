@@ -8,7 +8,7 @@ A full stack web app built with Node and Express that allows users to shorten lo
 
 !["The sign in page."](https://github.com/bdhunter3141/tiny-app/blob/master/docs/login-page.png?raw=true)
 
-!["Where you are able to edit your 'Tiny' URL."](https://github.com/bdhunter3141/tiny-app/blob/master/docs/url-edit-page.png?raw=true)
+!["Where you are able to edit your 'Tiny' URL and view analytics."](https://github.com/bdhunter3141/tiny-app/blob/master/docs/url-edit-page.png?raw=true)
 
 ## Dependencies
 

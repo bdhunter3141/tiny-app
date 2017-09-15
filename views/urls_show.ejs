@@ -8,9 +8,30 @@
   <% include partials/_header.ejs %>
   <!-- Shows the shortened URL and original URL -->
   <h2>Your <em>"Tiny"</em> URL</h2>
-  <p><a href="/u/<%= shortURL %>"><%= shortURL %></a> -- <%= origURL %></p>
-  <!-- If the user is logged in and the URL exists, then it displays a form to update the URL -->
+  <h4><a href="/u/<%= shortURL %>"><%= shortURL %></a> -- <%= origURL %></h4>
+  <!-- If the user is logged in and the URL exists, then it displays a form to update the URL and a view count including unique visitors -->
   <% if (user_id && exists) { %>
+    <p>View count: <%= viewCount %></p>
+    <p>Unique views: <%= uniqueViews %></p>
+    <!-- Loop through unique visitors and display their information -->
+    <% if (uniqueViews > 0) { %>
+      <p>Unique visitors: </p>
+      <ul>
+        <% for (let visitor in uniqueVisitors) { %>
+          <li>Name: <em><%= uniqueVisitors[visitor].name %></em>  -------  Views: <em><%= uniqueVisitors[visitor].views %></em></li>
+          <ul style="padding-top:5px;">
+            <li>Time:</li>
+            <!-- Loop through the times that each user visited the URL -->
+            <ul>
+              <% for (let i = 0; i < uniqueVisitors[visitor].time.length; i++) { %>
+                <li style="padding-bottom:10px;"> <em><%= uniqueVisitors[visitor].time[i] %></em></li>
+              <% } %>
+            </ul>
+          </ul>
+        <% } %>
+      </ul>
+    <% } %>
+    <!-- The form to update the URL -->
     <p>Should this link to somewhere else?</p>
     <form method="POST" action="/urls/<%= shortURL %>?_method=PUT">
       <input type="text" name="<%= shortURL %>" placeholder="http://" style="width: 300px">
