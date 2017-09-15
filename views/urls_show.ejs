@@ -6,14 +6,17 @@
 </head>
 <body>
   <% include partials/_header.ejs %>
+  <!-- Shows the shortened URL and original URL -->
   <h2>Your <em>"Tiny"</em> URL</h2>
-  <p><%= shortURL %> -- <%= origURL %></p>
+  <p><a href="/u/<%= shortURL %>"><%= shortURL %></a> -- <%= origURL %></p>
+  <!-- If the user is logged in and the URL exists, then it displays a form to update the URL -->
   <% if (user_id && exists) { %>
     <p>Should this link to somewhere else?</p>
     <form method="POST" action="/urls/<%= shortURL %>">
       <input type="text" name="<%= shortURL %>" placeholder="http://" style="width: 300px">
       <input type="submit" value="Update">
     </form>
+  <!-- If URL doesn't exist then there is message to reflect that -->
   <% } else { %>
     <% if (origURL !== "There is no URL by that name!") { %>
       <p>Sign in to create and edit your own "Tiny" URLs!</p>

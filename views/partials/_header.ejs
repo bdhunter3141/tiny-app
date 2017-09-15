@@ -1,5 +1,6 @@
 <header>
   <h1 style="display:inline-block; float:left; padding-right:10%;"><strong><a href="/urls/" style="text-decoration:none;">TinyApp</a></strong></h1>
+    <!-- Check to see if user isn't logged in and display register and sign in links -->
     <% if (!user_id) { %>
       <div>
         <ul style="list-style:none; display:inline-block; float:left;">
@@ -7,13 +8,14 @@
           <li style="display:inline-block; float:right; padding-right: 15px;"><a href="/login/">Sign In</a></li>
         </ul>
       </div>
+    <!-- If user is logged in then display welcome message, email, and logout button -->
     <% } else { %>
       <p style="display:inline-block;">
-      Welcome, <%= user_id.id %>!
+      Welcome, <%= user_id.email %>!
       </p>
       <form method="POST" action="/logout" style="display:inline-block; padding-left:10px;">
         <input type="submit" value="Logout">
       </form>
-    <% }; %>
+    <% } %>
     <br style="clear: both;" />
 </header>
